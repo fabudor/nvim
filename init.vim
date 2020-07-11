@@ -6,10 +6,12 @@ endif
 
 call plug#begin('~/.vim/plugged')
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'derekwyatt/vim-fswitch'
-Plug 'srooloose/nerdtree'
+Plug 'preservim/nerdtree'
 Plug 'gruvbox-community/gruvbox'
+Plug 'itchyny/lightline'
 call plug#end()
 
 let mapleader = ","
@@ -24,9 +26,12 @@ set noswapfile
 set encoding=utf-8
 set fileencoding=utf-8
 
+set clipboard+=unnamedplus
+
 "Look and feel
 colorscheme gruvbox
 set background=dark
+set number
 
 " jk maps to Escape
 inoremap JK <Esc>
@@ -56,15 +61,25 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
 nnoremap <C-p> :GFiles<CR>
-nnoremap <C-f> :Rg 
+nnoremap <C-P> :Files<CR>
+nnoremap <C-f> :Rg  
 
 nnoremap <F4> :FSHere<CR>
 
 " Open init.vim
 nnoremap <leader>ev :e ~/.config/nvim/init.vim<CR>
+" Source the changes once the init.vim is saved
 au! BufWritePost ~/.config/nvim/init.vim source ~/.config/nvim/init.vim
 
+
+
+
+
+
+" =======================================================
 " Coc specific
+" =======================================================
+
 " TextEdit might fail if hidden is not set.
 set hidden
 
