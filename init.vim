@@ -1,232 +1,204 @@
-if empty(glob('~/.config/nvim/autoload/plug.vim'))
-  silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
+call plug#begin('$XDG_CONFIG_HOME/nvim/plugged')
+Plug 'neovim/nvim-lspconfig'
+Plug 'tjdevries/lsp_extensions.nvim'
+Plug 'nvim-lua/completion-nvim'
 
-call plug#begin('~/.vim/plugged')
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'derekwyatt/vim-fswitch'
-Plug 'preservim/nerdtree'
+Plug 'rust-lang/rust.vim'
+Plug 'scrooloose/nerdtree'
 Plug 'gruvbox-community/gruvbox'
-Plug 'itchyny/lightline'
+Plug 'sainnhe/gruvbox-material'
+Plug 'jremmen/vim-ripgrep'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-fugitive'
 call plug#end()
 
-let mapleader = ","
+colorscheme gruvbox
 filetype on
 filetype plugin on
 filetype indent on
+syntax on                        " switch on syntax highlighting.
 
-set nobackup
-set nowritebackup
-set noswapfile
+let mapleader = ","
 
-set encoding=utf-8
-set fileencoding=utf-8
-
-set clipboard+=unnamedplus
-
-"Look and feel
-colorscheme gruvbox
 set background=dark
-set number
-
-" jk maps to Escape
-inoremap JK <Esc>
-inoremap jk <Esc>
-vnoremap JK <Esc>
-vnoremap jk <Esc>
-
-" Go to next buffer
-nnoremap <space><space> :bnext<CR>
-" Turn off highlight when done with searching with ,n
-nnoremap <silent><leader>n :nohls<CR>
-" Toggle NerdTree
-nnoremap <leader>t :NERDTreeToggle<CR>
-
-" Bubble up
-nnoremap <leader>u ddkP
-" Bubble down
-nnoremap <leader>d ddjP
-
-" Delete line without overwriting the paste register
-nnoremap dl _dd
-
-" Move throught the windows
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
-
-nnoremap <C-p> :GFiles<CR>
-nnoremap <C-P> :Files<CR>
-nnoremap <C-f> :Rg  
-
-nnoremap <F4> :FSHere<CR>
-
-" Open init.vim
-nnoremap <leader>ev :e ~/.config/nvim/init.vim<CR>
-" Source the changes once the init.vim is saved
-au! BufWritePost ~/.config/nvim/init.vim source ~/.config/nvim/init.vim
-
-
-
-
-
-
-" =======================================================
-" Coc specific
-" =======================================================
-
-" TextEdit might fail if hidden is not set.
-set hidden
-
-" Some servers have issues with backup files, see #649.
-set nobackup
-set nowritebackup
-
-" Give more space for displaying messages.
-set cmdheight=2
-
-" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
-" delays and poor user experience.
-set updatetime=300
-
-" Don't pass messages to |ins-completion-menu|.
+set completeopt=menuone,noinsert,noselect
 set shortmess+=c
 
-" Always show the signcolumn, otherwise it would shift the text each time
-" diagnostics appear/become resolved.
-if has("patch-8.1.1564")
-  " Recently vim can merge signcolumn and number column into one
-  set signcolumn=number
-else
-  set signcolumn=yes
-endif
+" Make sure that unsaved buffers that are to be put in the background are
+" allowed to go in there (ie. the "must save first" error doesn't come up)
+set nobackup                     " do not store backup or temporary files
+set nowritebackup
+set noswapfile
+set encoding=utf-8               " Set the file encoding to utf8
+set fileencoding=utf-8
+set undodir=~/vimfiles/undodir
+set undofile
 
-" Use tab for trigger completion with characters ahead and navigate.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
+set laststatus=2                 " Always show a statusline
+set colorcolumn=80               " set a colored column on this position
+set showtabline=0                " We certainly don't want to have tabs in VIM
+
+" For gui
+set termguicolors
+set guifont=Consolas:h15
+" Increase and decrease font size
+
+set tabstop=3                    " Tabstops are 3 spaces
+set shiftwidth=3
+set softtabstop=3
+set expandtab                    " replace tab with spaces
+set smartindent                  " used to be autoindent
+set smartcase                    " use case insensitive search until capital in search pattern
+set wrapscan                     " set the search scan to wrap lines
+set vb                           " set visual bell -- i hate that damned beeping
+set sc                           " set show command (easier to learn vim)
+" tell VIM to always put a status line in, even if there is only one window
+set showmode                     " show the current mode
+set mousehide                    " hide the mouse pointer while typing
+set guioptions=acg               " set the gui options the way I like
+set virtualedit=all              " set virtual edit so the cursor can go anywhere
+set hidden                       " if hidden is not set, TextEdit might fail.
+set backspace=indent,eol,start
+set ignorecase                   " ignore case in search patterns
+set number                       " Show the line numbers
+set list                         " Set the invisible characters
+set listchars+=tab:␉␠
+set listchars+=eol:⏎
+set listchars+=trail:␠
+set listchars+=nbsp:⎵
+set nofoldenable                 " Do not fold
+set scrolloff=2                  " When the page starts to scroll, keep the cursor n lines from the top and bottom
+set wildmenu                     " Make the command-line completion better
+set complete=.,w,b,t             " Insert mode completion. Same as default except that I remove the 'u' option
+set showfulltag                  " When completing by tag, show the whole tag, not just the function name
+set textwidth=80                 " Set the textwidth to be 80 chars
+set fillchars = ""               " get rid of the silly characters in separators
+set diffopt+=iwhite              " Add ignorance of whitespace to diff
+set hlsearch                     " Enable search highlighting
+set incsearch                    " Incrementally match the search shows the matched patterns while typing
+set clipboard=unnamed            " Use the systems clipboard
+set autoread
+set cmdheight=2                  " Give more space for displaying messages.
+set updatetime=300
+
+
+" let g:diagnostic_virtual_text_prefix = 'T'
+" let g:diagnostic_enable_virtual_text = 1
+" let g:completion_confirm_key = "\<C-y>"
+" let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
+" "let g:completion_enable_snippet = 'UltiSnips'
+" let g:completion_matching_smart_case = 1
+" let g:completion_trigger_on_delete = 1
+" let g:neomake_open_list = 2
+
+" Rust formatter
+let g:rustfmt_autosave = 1
+let g:rustfmt_fail_silently = 1
+
+
+lua <<EOF
+-- nvim_lsp object
+local nvim_lsp = require'lspconfig'
+
+-- function to attach completion when setting up lsp
+local on_attach = function(client)
+    require'completion'.on_attach(client)
+end
+
+-- Enable rust_analyzer
+nvim_lsp.rust_analyzer.setup({ on_attach=on_attach })
+
+-- Enable diagnostics
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics, {
+    virtual_text = true,
+    signs = true,
+    update_in_insert = true,
+  }
+)
+EOF
+
+" Trigger completion with <Tab>
 inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+  \ pumvisible() ? "\<C-n>" :
+  \ <SID>check_back_space() ? "\<TAB>" :
+  \ completion#trigger_completion()
 
 function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~ '\s'
 endfunction
 
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
+" Code navigation shortcuts
+nnoremap <silent> <leader>gf  <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> <leader>gi  <cmd>lua vim.lsp.buf.implementation()<CR>
+nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
+nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
+nnoremap <silent> ga    <cmd>lua vim.lsp.buf.code_action()<CR>
 
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
-" position. Coc only does snippet and additional edit on confirm.
-" <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
-if exists('*complete_info')
-  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-else
-  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-endif
+" Show diagnostic popup on cursor hold
+autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
 
-" Use `[g` and `]g` to navigate diagnostics
-" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
+" Goto previous/next diagnostic warning/error
+nnoremap <silent> g[ <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
+nnoremap <silent> g] <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
 
-" GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+autocmd CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *
+\ lua require'lsp_extensions'.inlay_hints{ prefix = '', highlight = "Comment" }
 
-" Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
 
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
 
-" Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
+au FocusGained * :checktime
 
-" Symbol renaming.
-nmap <leader>rn <Plug>(coc-rename)
+nnoremap <silent> <leader>s :let &guifont = substitute(&guifont, ':h\(\d\+\)', '\=":h" . (submatch(1) - 1)', '')<CR>
+nnoremap <silent> <leader>b :let &guifont = substitute(&guifont, ':h\(\d\+\)', '\=":h" . (submatch(1) + 1)', '')<CR>
 
-" Formatting selected code.
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
+" map to escape and space to set the cursor on the right position
+inoremap JK <Esc><space>
+inoremap jk <Esc><space>
+vnoremap JK <Esc><space>
+vnoremap jk <Esc><space>
 
-augroup mygroup
-  autocmd!
-  " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder.
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
+nnoremap <space><space> :bnext<CR>        " Go to the next buffer
+nnoremap <silent> <leader>n :nohls<CR>    " Turn off that stupid highlight search
+nnoremap <leader>t :NERDTreeToggle<cr>    " Toggle the NERDTree
+nnoremap <leader>w :set invwrap<cr>       " toggle nowrap
+nnoremap <leader>u ddkP                   " Set bubble up
+nnoremap <leader>d ddjP                   " Set bubble down
+nnoremap dl _dd                           " delete line without yank in register
 
-" Applying codeAction to the selected region.
-" Example: `<leader>aap` for current paragraph
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
+nnoremap <C-h> <C-w>h                     " Go to the window on the left
+nnoremap <C-j> <C-w>j                     " Go to the window below
+nnoremap <C-k> <C-w>k                     " Go to the window above
+nnoremap <C-l> <C-w>l                     " Go to the window on the right
 
-" Remap keys for applying codeAction to the current buffer.
-nmap <leader>ac  <Plug>(coc-codeaction)
-" Apply AutoFix to problem on the current line.
-nmap <leader>qf  <Plug>(coc-fix-current)
+nnoremap <leader>p :vertical resize +5<CR>
+nnoremap <leader>m :vertical resize -5<CR>
 
-" Map function and class text objects
-" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
-xmap if <Plug>(coc-funcobj-i)
-omap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap af <Plug>(coc-funcobj-a)
-xmap ic <Plug>(coc-classobj-i)
-omap ic <Plug>(coc-classobj-i)
-xmap ac <Plug>(coc-classobj-a)
-omap ac <Plug>(coc-classobj-a)
+nnoremap <C-p> :GFiles<CR>
+nnoremap <C-f> :Rg 
 
-" Use CTRL-S for selections ranges.
-" Requires 'textDocument/selectionRange' support of LS, ex: coc-tsserver
-nmap <silent> <C-s> <Plug>(coc-range-select)
-xmap <silent> <C-s> <Plug>(coc-range-select)
+nnoremap <leader>h :%!xxd<CR>             " show the content of the buffer in hexadecimal
+nnoremap <leader>H :%!xxd -r<CR>          " convert from hexadecimal to ASCII
 
-" Add `:Format` command to format current buffer.
-command! -nargs=0 Format :call CocAction('format')
+" fetch my latest vimrc
+nnoremap <leader>ev :e $XDG_CONFIG_HOME/nvim/init.vim<CR>
+" Reload the _vimrc file every time it's saved
+au! BufWritePost $XDG_CONFIG_HOME/nvim/init.vim source $XDG_CONFIG_HOME/nvim/init.vim
 
-" Add `:Fold` command to fold current buffer.
-command! -nargs=? Fold :call     CocAction('fold', <f-arg>)
+nnoremap <C-F10> :Git pull origin master<CR>"" reload the vimrc once it's saved
+" commit the vimrc local and push it to github
+nnoremap <C-F11> :Git commit --all -m"commit"<CR>:Git push<CR>
 
-" Add `:OR` command for organize imports of the current buffer.
-command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+nnoremap <leader>n :cn<CR>
 
-" Add (Neo)Vim's native statusline support.
-" NOTE: Please see `:h coc-status` for integrations with external plugins that
-" provide custom statusline: lightline.vim, vim-airline.
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+" Abbreviations
+iabbrev @@ douwe.faber@xyleminc.com
 
-" Mappings for CoCList
-" Show all diagnostics.
-nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
-" Manage extensions.
-nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
-" Show commands.
-nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
-" Find symbol of current document.
-nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
-" Search workspace symbols.
-nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
-" Do default action for next item.
-nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
-" Do default action for previous item.
-nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
-" Resume latest coc list.
-nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>s
 
