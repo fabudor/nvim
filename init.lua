@@ -1,7 +1,5 @@
 -- init.lua
 
-
-
 -- global options start with 'vim.o'
 -- local to window start with 'vim.wo'
 -- lobal to buffer start with 'vim.bo'
@@ -15,11 +13,9 @@ require('packer').startup(function(use)
    use 'williamboman/nvim-lsp-installer'                   -- Install LSP with a single command
 
    use 'hrsh7th/nvim-cmp'                                  -- Lua completion
-   use 'hrsh7th/cmp-nvim-lsp'
    use 'hrsh7th/cmp-vsnip'
    use 'hrsh7th/cmp-path'
    use 'hrsh7th/cmp-buffer'
-   use 'hrsh7th/vim-vsnip'
 
    use 'flazz/vim-colorschemes'                            -- Many colorschemes
 
@@ -42,15 +38,15 @@ end)
 
 
 -- Treesitter configuration
-local configs = require 'nvim-treesitter.configs'
-configs.setup {
-   ensure_installed = "maintained", -- Only use parsers that are maintained
+require 'nvim-treesitter.configs'.setup {
+   ensure_installed = {"c", "lua", "rust"},
+   sync_install = false,
+   ignore_install = { "javascript" },
    highlight = { -- enable highlighting
    enable = true,
-},
-indent = {
-   enable = false, -- default is disabled anyways
-}
+   -- disable = { "c" },
+   additional_vim_regex_highlighting = false,
+   },
 }
 
 -- Lsp installer configuration
@@ -76,7 +72,6 @@ map('n', '<leader>rn', ':lua vim.lsp.buf.rename()<cr>', opts)
 
 
 -- Lua completion
-
 
 local cmp = require'cmp'
 cmp.setup({
@@ -119,11 +114,12 @@ require('lualine').setup()
 
 -- Nvim tree configuration
 require'nvim-tree'.setup {
-   disable_netrw       = true,
-   hijack_netrw        = true,
-   open_on_setup       = false,
-   ignore_ft_on_setup  = {},
-   update_to_buf_dir   = {
+   auto_reload_on_write = true,
+   disable_netrw        = true,
+   hijack_netrw         = true,
+   open_on_setup        = false,
+   ignore_ft_on_setup   = {},
+   update_to_buf_dir    = {
       enable = true,
       auto_open = true,
    },
@@ -153,7 +149,7 @@ require'nvim-tree'.setup {
       width = 35,
       height = 30,
       side = 'left',
-      auto_resize = false,
+      --auto_resize = false,
       mappings = {
          custom_only = false,
          list = {}
@@ -183,6 +179,8 @@ set .listchars = {
    precedes = '«',       -- LEFT-POINTING DOUBLE ANGLE QUOTATION MARK (U+00AB, UTF-8: C2 AB)
    tab      = '▷⋯',      -- WHITE RIGHT-POINTING TRIANGLE (U+25B7, UTF-8: E2 96 B7) + MIDLINE HORIZONTAL ELLIPSIS (U+22EF, UTF-8: E2 8B AF)
    trail    = '•',       -- BULLET (U+2022, UTF-8: E2 80 A2)
+   space    = '·',       -- BULLET (U+2022, UTF-8: E2 80 A2)
+   eol      = '⏎',       --
 }
 
 -- set .completeopt='menuone, noinsert, noselect' -- unfortunately this does not work
@@ -218,6 +216,8 @@ set .foldenable = false
 set .colorcolumn = '80'
 set .tabline = ''
 set .signcolumn = 'yes'
+set .ignorecase = true
+set .smartcase = true
 
 
 -- tab settings
@@ -227,9 +227,9 @@ set .softtabstop = 3
 
 set .smartindent = true
 set .smartcase = true
-set .guifont='Hack NF:h12'
+set .guifont='Hack NF:h11'
 
-set .laststatus = 2
+set .laststatus = 3
 set .lazyredraw = true
 set .number = true
 set .swapfile = false
@@ -247,7 +247,7 @@ map('n', ',u', 'u ddkP', opts)                 -- bubble up
 map('n', ',d', 'u ddjP', opts)                 -- bubble down
 
 map('n', ',h', ':%!xxd<CR>', opts)             -- show content in hexadecimal
-map('n', ',H', ':%!xxd -r<CR>', opts)          -- back to ascii again 
+map('n', ',H', ':%!xxd -r<CR>', opts)          -- back to ascii again
 
 -- map('n', ',n', ':cn<CR>', opts)             -- go to next error. conflict
 -- with nohls
