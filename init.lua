@@ -10,12 +10,19 @@ require('packer').startup(function(use)
    use 'nvim-treesitter/nvim-treesitter'                   -- Programming languages parser
 
    use 'neovim/nvim-lspconfig'                             -- Language Server Protocol configuration
-   use 'williamboman/nvim-lsp-installer'                   -- Install LSP with a single command
+
+   -- Redcloak does not like williamboman
+   --use 'williamboman/nvim-lsp-installer'                 -- Install LSP with a single command
 
    use 'hrsh7th/nvim-cmp'                                  -- Lua completion
+
+   use 'hrsh7th/cmp-nvim-lsp'                              -- Lua completion
+   use 'hrsh7th/cmp-nvim-lua'                              -- Lua completion
+   use 'hrsh7th/cmp-nvim-lsp-signature-help'               -- Lua completion
    use 'hrsh7th/cmp-vsnip'
    use 'hrsh7th/cmp-path'
    use 'hrsh7th/cmp-buffer'
+   use 'hrsh7th/vim-vsnip'
 
    use 'flazz/vim-colorschemes'                            -- Many colorschemes
 
@@ -32,7 +39,18 @@ require('packer').startup(function(use)
       requires = 'kyazdani42/nvim-web-devicons',           -- Icons for the treeview
       config = function() require 'nvim-tree'.setup {} end
    }
-
+   use {
+      "folke/trouble.nvim",
+      requires = "kyazdani42/nvim-web-devicons",
+      config = function()
+         require("trouble").setup {
+            -- your configuration comes here
+            -- or leave it empty to use the default settings
+            -- refer to the configuration section below
+         }
+      end
+   }
+   use 'simrat39/rust-tools.nvim'
    use 'rust-lang/rust.vim'                                -- Rust formatter etc
 end)
 
@@ -46,33 +64,13 @@ require 'nvim-treesitter.configs'.setup {
    enable = true,
    -- disable = { "c" },
    additional_vim_regex_highlighting = false,
-   },
+},
 }
 
--- Lsp installer configuration
-local lsp_installer = require 'nvim-lsp-installer'
-lsp_installer.on_server_ready(function(server)
-   local opts = {}
-   server:setup(opts)
-end)
 
-local opts = {noremap = true}
-local map = vim.api.nvim_set_keymap
-map('n', 'gd', ':lua vim.lsp.buf.definition()<cr>', opts)
-map('n', 'gD', ':lua vim.lsp.buf.declaration()<cr>', opts)
-map('n', 'gi', ':lua vim.lsp.buf.implementation()<cr>', opts)
-map('n', 'gw', ':lua vim.lsp.buf.document_symbol()<cr>', opts)
-map('n', 'gw', ':lua vim.lsp.buf.workspace_symbol()<cr>', opts)
-map('n', 'gr', ':lua vim.lsp.buf.references()<cr>', opts)
-map('n', 'gt', ':lua vim.lsp.buf.type_definition()<cr>', opts)
-map('n', 'K', ':lua vim.lsp.buf.hover()<cr>', opts)
-map('n', '<c-k>', ':lua vim.lsp.buf.signature_help()<cr>', opts)
-map('n', ',af', ':lua vim.lsp.buf.code_action()<cr>', opts)
-map('n', '<leader>rn', ':lua vim.lsp.buf.rename()<cr>', opts)
-
+require('rust-tools').setup()
 
 -- Lua completion
-
 local cmp = require'cmp'
 cmp.setup({
    -- Enable LSP snippets
@@ -119,11 +117,6 @@ require'nvim-tree'.setup {
    hijack_netrw         = true,
    open_on_setup        = false,
    ignore_ft_on_setup   = {},
---   update_to_buf_dir    = {
---      enable = true,
---      auto_open = true,
---   },
---   auto_close          = false,
    open_on_tab         = false,
    hijack_cursor       = false,
    update_cwd          = false,
@@ -147,7 +140,6 @@ require'nvim-tree'.setup {
    },
    view = {
       width = 35,
-      height = 30,
       side = 'left',
       --auto_resize = false,
       mappings = {
@@ -242,6 +234,8 @@ map('n', ',n', ':nohls<CR>', opts)
 map('n', ',t', ':NvimTreeToggle<CR>', opts)
 map('n', ',r', ':NvimTreeRefresh<CR>', opts)
 
+map('n', '<F3>',':TroubleToggle<CR>', opts)
+
 map('n', ',w', ':set invwrap<CR>', opts)
 map('n', ',u', 'u ddkP', opts)                 -- bubble up
 map('n', ',d', 'u ddjP', opts)                 -- bubble down
@@ -278,6 +272,16 @@ map('i', 'JK', '<Esc><space>', opts)
 map('v', 'jk', '<Esc><space>', opts)
 map('v', 'JK', '<Esc><space>', opts)
 
+-- map('n', '<C-]>'     ,':lua vim.lsp.buf.definition()<CR>', opts)
+-- map('n', '<C-k>'     ,':lua vim.lsp.buf.signature_help()<CR>', opts)
+map('n', 'K'         ,':lua vim.lsp.buf.hover()<CR>', opts)
+map('n', 'gi'        ,':lua vim.lsp.buf.implementation()<CR>', opts)
+map('n', 'gc'        ,':lua vim.lsp.buf.incoming_calls()<CR>', opts)
+map('n', 'gd'        ,':lua vim.lsp.buf.definition()<CR>', opts)
+map('n', 'gr'        ,':lua vim.lsp.buf.references()<CR>', opts)
+map('n', 'gn'        ,':lua vim.lsp.buf.rename()<CR>', opts)
+map('n', 'gs'        ,':lua vim.lsp.buf.document_symbol()<CR>', opts)
+map('n', 'gw'        ,':lua vim.lsp.buf.workspace_symbol()<CR>', opts)
 
 function toggle_background()
    if vim.o.background == 'dark' then
